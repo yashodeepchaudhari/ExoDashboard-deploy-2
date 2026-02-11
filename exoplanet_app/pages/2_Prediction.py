@@ -5,6 +5,12 @@ import torch.nn as nn
 import numpy as np
 import plotly.express as px
 import torch.serialization
+import os
+
+# Define the path relative to this script's location
+# This goes up one level from 'pages/' to the root directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "..", "siamese_model.pt")
 
 # Allowlist numpy reconstruction for PyTorch 2.6+
 torch.serialization.add_safe_globals([np._core.multiarray._reconstruct])
@@ -23,9 +29,16 @@ class SiameseBackbone(nn.Module):
     def forward(self, x):
         return self.backbone(x)
 
+
+
 @st.cache_resource
 def load_resources():
-    checkpoint = torch.load("siamese_model.pt", map_location=torch.device('cpu'), weights_only=False)
+    # Verify file existence for cleaner debugging
+    if not os.path.exists(MODEL_PATH):
+        st.error(f"Model file not found at {MODEL_PATH}. Check your repository structure.")
+        st.stop()
+        
+    checkpoint = torch.load(MODEL_PATH, map_location=torch.device('cpu'), weights_only=False)
     model = SiameseBackbone()
     model.load_state_dict(checkpoint['model_state_dict'], strict=False)
     model.eval()
@@ -92,4 +105,5 @@ if uploaded_file:
     else:
         st.error("CSV error: Ensure your file contains the 51 light curve features.")
 else:
+
     st.info("Please upload a CSV file to begin the analysis.")
