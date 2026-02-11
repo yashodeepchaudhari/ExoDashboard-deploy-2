@@ -348,3 +348,31 @@ st.plotly_chart(fig,use_container_width=True)
 # ================= FOOTER =================
 st.markdown("---")
 st.caption("Exoplanet Detection System | Siamese Neural Networks | Streamlit Deployment")
+
+# ================= SAMPLE DATA PREVIEW =================
+st.subheader("📁 Sample Dataset Preview")
+
+# Creating the sample dataframe as seen in your screenshot
+sample_df = pd.DataFrame({
+    "FLUX_1": [1.01, 0.98, 1.00],
+    "FLUX_2": [0.99, 0.97, 1.02],
+    "LABEL": ["Planet", "No Planet", "Planet"]
+})
+
+# st.data_editor creates the "Edited Data" effect from your image
+# num_rows="dynamic" allows users to add or delete rows
+edited_df = st.data_editor(sample_df, num_rows="dynamic", use_container_width=True)
+
+# Display the result of the edits
+st.write("Edited Data:")
+st.dataframe(edited_df, use_container_width=True)
+
+# ================= NAVIGATION BUTTON =================
+# This matches the button at the bottom of your screenshot
+if st.button("🚀 Go to Prediction Dashboard"):
+    # Ensure you have a folder named 'pages' with '2_Prediction.py' inside it
+    try:
+        st.switch_page("pages/2_Prediction.py")
+    except Exception as e:
+        st.error("Prediction page not found. Please ensure 'pages/2_Prediction.py' exists.")
+
